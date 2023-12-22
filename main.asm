@@ -1,4 +1,5 @@
 SECTION .data
+global overflow
 
 msg1 db "Bem vindo. Digite seu nome: ", 0
 msg2 db "Hola, ", 0
@@ -15,6 +16,7 @@ menu8 db "- 7: SAIR", 10, 0
 overflow db "OCORREU OVERFLOW", 10, 0
 
 SECTION .bss
+global precision
 
 name resb 60
 precision resb 2
@@ -22,7 +24,7 @@ menuOpt resb 2
 
 SECTION .text
 global _start
-extern printstr, getstr
+extern printstr, getstr, getdw
 
 _start:
 
@@ -75,6 +77,9 @@ menu:
     push 2
     call getstr
 
+    call getdw    
+
+    jmp menu
 
     ; exit
     mov eax, 1
