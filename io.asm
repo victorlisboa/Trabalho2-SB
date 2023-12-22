@@ -59,5 +59,9 @@ getstr:
     mov edx, [ebp+8]    ; size of string
     int 80h
 
+    ; removes '\n'
+    mov ebx, [ebp+12]
+    mov BYTE [ebx+eax-1], 0
+
     leave
     ret 8

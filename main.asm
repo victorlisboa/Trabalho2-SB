@@ -52,6 +52,30 @@ _start:
     push 2
     call getstr
 
+menu:
+    ; presents menu and asks for operation
+    push menu1
+    call printstr
+    push menu2
+    call printstr
+    push menu3
+    call printstr
+    push menu4
+    call printstr
+    push menu5
+    call printstr
+    push menu6
+    call printstr
+    push menu7
+    call printstr
+    push menu8
+    call printstr
+    
+    push menuOpt
+    push 2
+    call getstr
+
+
     ; exit
     mov eax, 1
     mov ebx, 0
