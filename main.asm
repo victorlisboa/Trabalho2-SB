@@ -24,7 +24,7 @@ menuOpt resb 2
 
 SECTION .text
 global _start
-extern printstr, getstr, getdw, mult, add, sub, div
+extern printstr, getstr, getdw, mult, add, sub, div, exp, mod
 
 _start:
 
