@@ -1,11 +1,18 @@
 SECTION .text
-global div
+global div16, div32
 
+div16:
+%define op1 WORD [EBP-4]
+%define op2 WORD [EBP-6]
+enter 4,0
+jmp div
+
+div32:
 %define op1 DWORD [EBP-4]
 %define op2 DWORD [EBP-8]
+enter 8,0
 
 div:
-    enter 8,0 ;two 32-bit variables
     push ebx
     mov op1, -12
     mov op2, -3

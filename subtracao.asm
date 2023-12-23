@@ -1,10 +1,18 @@
 SECTION .text
-global sub
+global sub16, sub32
 
+sub16:
+%define op1 WORD [EBP-4]
+%define op2 WORD [EBP-6]
+enter 4,0
+jmp sub
+
+sub32:
 %define op1 DWORD [EBP-4]
 %define op2 DWORD [EBP-8]
+enter 8,0
+
 sub:
-    enter 8,0 ;two 32-bit variables
     push ebx
     mov op1, 100
     mov op2, 10
