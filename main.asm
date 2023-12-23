@@ -73,11 +73,48 @@ menu:
     push 2
     call getstr
 
-    call getnum    
+    cmp BYTE [menuOpt], '1'
+    je _add
+    cmp BYTE [menuOpt], '2'
+    je _sub
+    cmp BYTE [menuOpt], '3'
+    je _mult
+    cmp BYTE [menuOpt], '4'
+    je _div
+    cmp BYTE [menuOpt], '5'
+    je _exp
+    cmp BYTE [menuOpt], '6'
+    je _mod
+    cmp BYTE [menuOpt], '7'
+    je exit
 
-    jmp menu
+    jmp menu	; se digitou qualquer outra coisa, printa o menu de novo
 
-    ; exit
+%define add add32
+_add:
+    call add
+
+%define sub sub32
+_sub:
+    call sub
+
+%define mult mult32
+_mult:
+    call mult
+
+%define div div32
+_div:
+    call div
+
+%define exp exp32
+_exp:
+    call exp
+
+%define mod mod32
+_mod:
+    call mod
+
+exit:
     mov eax, 1
     mov ebx, 0
     int 80h
