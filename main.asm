@@ -4,7 +4,6 @@ global overflow
 msg1 db "Bem vindo. Digite seu nome: ", 0
 msg2 db "Hola, ", 0
 msg3 db ", bem-vindo ao programa de CALC IA-32", 10, 0
-msg4 db	"Vai trabalhar com 16 ou 32 bits (digite 0 para 16, e 1 para 32): ", 0
 menu1 db "ESCOLHA UMA OPÇÃO:", 10, 0
 menu2 db "- 1: SOMA", 10, 0
 menu3 db "- 2: SUBTRACAO", 10, 0
@@ -19,14 +18,19 @@ SECTION .bss
 global precision
 
 name resb 60
-precision resb 2
 menuOpt resb 2
 
 SECTION .text
+%define getnum getdw
+%define printnum printdw
 global _start
 extern printstr, getstr, getdw, add16, add32, sub16, sub32, mult16, mult32, div16, div32, exp16, exp32, mod16, mod32
+;extern getstr, getdw, getw, printstr, printw, printdw
+
 
 _start:
+    
+    ; greets user
 
     push msg1
     call printstr
@@ -45,14 +49,6 @@ _start:
 
     push msg3
     call printstr
-
-    ; asks for precision
-    push msg4
-    call printstr
-
-    push precision
-    push 2
-    call getstr
 
 menu:
     ; presents menu and asks for operation
@@ -77,7 +73,7 @@ menu:
     push 2
     call getstr
 
-    call getdw    
+    call getnum    
 
     jmp menu
 
