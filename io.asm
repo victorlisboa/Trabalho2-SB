@@ -74,16 +74,45 @@ getstr:
 ; Description:
 ;   reads ASCII number and converts into int32
 %define dw_max_len 11
+%define val [ebp-4]
 getdw:
     enter 15, 0
     
+    ; reads ASCII number
     mov eax, ebp
     sub eax, 15		; eax = ebp - 15
     push eax		; salva ponteiro da string
     push eax		; passa ponteiro da string
     push dw_max_len	; passa tamanho da string
     call getstr		; string lida fica na pilha
+    
     pop eax		; recupera ponteiro da string
 	    
+    ; converts to binary
+    mov DWORD val, 0	; zera valor inicial
+getdw_loop:
+    cmp BYTE [eax], 0	; verifica se chegou no final da string
+    je getdw_end
+    
+    ; multiplica val por 10
+    mov ebx, val
+    mov edx, ebx
+    sal ebx, 2
+    add ebx, edx
+    add ebx, ebx	; ebx = val*10
+    mov val, ebx
+
+    mov BYTE ebx, [eax]	; ebx = char
+    sub ebx, 0x30	; char -> number
+    add val, ebx	; val += number
+    inc eax		; ponteiro++
+    jmp getdw_loop
+
+getdw_end:
+    cmp DWORD val, 7
+    je dbg
+dbg1:    
     leave
     ret
+dbg:
+    jmp dbg1
