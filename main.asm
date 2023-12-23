@@ -24,8 +24,9 @@ SECTION .text
 %define getnum getdw
 %define printnum printdw
 global _start
-extern getstr, printstr, getdw
+extern printstr, getstr, getdw, add16, add32, sub16, sub32, mult16, mult32, div16, div32, exp16, exp32, mod16, mod32
 ;extern getstr, getdw, getw, printstr, printw, printdw
+
 
 _start:
     
