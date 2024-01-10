@@ -1,52 +1,34 @@
 SECTION .text
 global mod16, mod32
+extern printw, printdw, getw, getdw
 
+%define op1 WORD [EBP-2]
 mod16:
-%define op1 WORD [EBP-4]
-%define op2 WORD [EBP-6]
-enter 4,0
-push ebx
-mov op1, -26
-mov op2, 7
-movsx eax, op1
-cdq ; sign extend eax into edx:eax
-movsx ebx, op2 
-idiv ebx
-test eax, eax      ; check if quotient is negative
-jge fim           ; jump if quotient is greater than or equal to zero
-cmp edx, 0         ; check if remainder is non-zero
-jz fim            ; jump if remainder is zero
-dec eax     ; mod divisor to remainder for negative quotient 
-imul ebx ; eax = quocient * divisor
-movsx ebx, op1 ;ebx = divident
-sub ebx, eax ; ebx = divident - quocient * divisor
-mov edx, ebx ; edx = remainer
-jmp fim
-
-mod32:
-%define op1 DWORD [EBP-4]
-%define op2 DWORD [EBP-8]
-enter 8,0
-push ebx
-mov op1, -23
-mov op2, -7
-mov eax, op1
-cdq ; sign extend eax into edx:eax
-mov ebx, op2 
-idiv ebx
-test eax, eax      ; check if quotient is negative
-jge fim           ; jump if quotient is greater than or equal to zero
-cmp edx, 0         ; check if remainder is non-zero
-jz fim            ; jump if remainder is zero
-dec eax     ; mod divisor to remainder for negative quotient 
-imul op2 ; eax = quocient * divisor
-mov ebx, op1 ;ebx = divident
-sub ebx, eax ; ebx = divident - quocient * divisor
-mov edx, ebx ; edx = remainer
-
-fim:
-    mov eax, edx
-    pop ebx
+    enter 2,0
+    call getw
+    mov op1, ax
+    call getw
+    mov bx, ax      ; guarda segundo numero
+    mov ax, op1
+    cwd             ; extende sinal do ax pra 
+    idiv bx         ; dx:ax / bx
+    push dx         ; quocient is on ax
+    call printw
     leave
-    ret  
-    
+    ret
+
+%define op1 DWORD [EBP-4]
+mod32:
+    enter 4,0
+    call getdw
+    mov op1, eax
+    call getdw
+    mov ebx, eax
+    mov eax, op1
+    cdq             ; sign extend eax into edx:eax
+    idiv ebx        ; edx:eax / ebx
+    push edx        ; remainder is on eax
+    call printdw
+    leave
+    ret
+

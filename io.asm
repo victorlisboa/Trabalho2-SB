@@ -1,5 +1,5 @@
 SECTION .text
-global printstr, getstr, getdw
+global printstr, printw, printdw, getstr, getw, getdw
 
 ; printstr
 ; Args:
@@ -66,6 +66,48 @@ getstr:
     leave
     ret 8
 
+;  getw:
+;; Args:
+;;   -
+;; Returns:
+;;   AX = int16 read
+;; Description:
+;;   reads ASCII number and converts into int32
+;%define dw_max_len 13
+;%define val [ebp-4]
+getw:
+printw:
+printdw:
+;    enter 17, 0
+;    
+;    ; reads ASCII number
+;    mov ebx, ebp
+;    sub ebx, 17		; ebx = ebp - 17
+;    push ebx		; salva ponteiro da string
+;    push ebx		; passa ponteiro da string
+;    push dw_max_len	; passa tamanho da string
+;    call getstr		; string lida fica na pilha
+;    
+;    pop ebx		    ; recupera ponteiro da string
+;	    
+;    ; converts to binary
+;    mov eax, 0	; zera valor inicial
+;Getdw_loop:
+;    cmp BYTE [ebx], 0	; verifica se chegou no final da string
+;    je getdw_end
+;    
+;    ; multiplica val por 10
+;    mov edx, eax
+;    sal eax, 2
+;    add eax, edx
+;    add eax, eax	; ebx = val*10
+;    
+;    movsx BYTE ecx, [ebx]	; ebx = char
+;    sub ecx, 0x30	        ; char -> number
+;    add eax, ecx	        ; num += number
+;    inc ebx	            	; ponteiro++
+;    jmp getdw_loop
+
 ; getdw
 ; Args:
 ;   -
@@ -73,46 +115,53 @@ getstr:
 ;   EAX = int32 read
 ; Description:
 ;   reads ASCII number and converts into int32
-%define dw_max_len 11
-%define val [ebp-4]
+%define dw_max_len 13
+%define ngt WORD [ebp-2]
 getdw:
     enter 15, 0
     
     ; reads ASCII number
-    mov eax, ebp
-    sub eax, 15		; eax = ebp - 15
-    push eax		; salva ponteiro da string
-    push eax		; passa ponteiro da string
+    mov ebx, ebp
+    sub ebx, 15		; ebx = ebp - 17
+    push ebx		; salva ponteiro da string
+    push ebx		; passa ponteiro da string
     push dw_max_len	; passa tamanho da string
     call getstr		; string lida fica na pilha
-    
-    pop eax		; recupera ponteiro da string
-	    
+ 
+    pop ebx		    ; recupera ponteiro da string
+	
+    ; check if it's negative
+    mov edx, 0
+    cmp BYTE [ebx], '-'
+    sete dl
+    mov ngt, dx 
+    mov eax, 0	; zera valor inicial
+    jne getdw_loop
+    inc ebx
+
     ; converts to binary
-    mov DWORD val, 0	; zera valor inicial
 getdw_loop:
-    cmp BYTE [eax], 0	; verifica se chegou no final da string
+    cmp BYTE [ebx], 0	; verifica se chegou no final da string
     je getdw_end
     
     ; multiplica val por 10
-    mov ebx, val
-    mov edx, ebx
-    sal ebx, 2
-    add ebx, edx
-    add ebx, ebx	; ebx = val*10
-    mov val, ebx
-
-    mov BYTE ebx, [eax]	; ebx = char
-    sub ebx, 0x30	; char -> number
-    add val, ebx	; val += number
-    inc eax		; ponteiro++
+    mov edx, eax
+    sal eax, 2
+    add eax, edx
+    add eax, eax	; ebx = val*10
+    
+    movsx ecx, BYTE [ebx]	; ebx = char
+    sub ecx, 0x30	        ; char -> number
+    add eax, ecx	        ; num += number
+    inc ebx	            	; ponteiro++
     jmp getdw_loop
 
 getdw_end:
-    cmp DWORD val, 7
-    je dbg
-dbg1:    
+    cmp ngt, 1
+    jne getdw2_end
+    neg eax
+
+getdw2_end:
     leave
     ret
-dbg:
-    jmp dbg1
+

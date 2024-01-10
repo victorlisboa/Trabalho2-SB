@@ -1,30 +1,27 @@
 SECTION .text
+extern getw, getdw, printw, printdw
 global add16, add32
 
 add16:
-%define op1 WORD [EBP-4]
-%define op2 WORD [EBP-6]
-enter 4,0
-push ebx
-mov op1, 40 ;sing-extend
-mov op2, 32 ;sign-extend
-movsx eax, op1 
-movsx ebx, op2
-add eax, ebx
-pop ebx
-leave
-ret
+%define op1 WORD [EBP-2]
+    enter 2,0
+    call getw
+    mov op1, ax
+    call getw
+    add ax, op1
+    push ax
+    call printw
+    leave
+    ret
 
-add32:
 %define op1 DWORD [EBP-4]
-%define op2 DWORD [EBP-8]
-enter 8,0
-push ebx
-mov op1, -10
-mov op2, 3
-mov eax, op1
-mov ebx, op2
-add eax, ebx
-pop ebx
-leave
-ret
+add32:
+    enter 4,0
+    call getdw
+    mov op1, eax
+    call getdw
+    add eax, op1
+    push eax
+    call printdw
+    leave
+    ret
